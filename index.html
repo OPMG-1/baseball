@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>숫자 야구 게임</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(to right, #dff6f0, #c2e9fb);
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: white;
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 350px;
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    p {
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 18px;
+      width: 150px;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin-top: 10px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      background: #3dc1d3;
+      color: white;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #1e90a3;
+    }
+
+    .log {
+      margin-top: 25px;
+      text-align: left;
+      max-height: 200px;
+      overflow-y: auto;
+      background: #f9f9f9;
+      border-radius: 10px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      font-size: 16px;
+    }
+
+    .log div {
+      padding: 4px 0;
+      border-bottom: 1px dashed #ccc;
+    }
+
+    .log div:last-child {
+      border-bottom: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>⚾ 숫자 야구</h1>
+    <p>서로 다른 3자리 숫자를 맞혀보세요!</p>
+    <input type="text" id="guess" maxlength="3" placeholder="예: 123" />
+    <br>
+    <button onclick="checkGuess()">확인</button>
+    <div class="log" id="log"></div>
+  </div>
+
+  <script>
+    // 컴퓨터가 고른 정답 숫자 (중복 없이)
+    let answer = [];
+    while (answer.length < 3) {
+      const num = Math.floor(Math.random() * 10);
+      if (!answer.includes(num)) {
+        answer.push(num);
+      }
+    }
+
+    function checkGuess() {
+      const input = document.getElementById("guess").value;
+      const log = document.getElementById("log");
+
+      if (input.length !== 3 || isNaN(input)) {
+        alert("서로 다른 숫자 3자리를 입력하세요!");
+        return;
+      }
+
+      const guess = input.split('').map(Number);
+      if (new Set(guess).size !== 3) {
+        alert("숫자가 중복되지 않아야 해요!");
+        return;
+      }
+
+      let strike = 0;
+      let ball = 0;
+
+      for (let i = 0; i < 3; i++) {
+        if (guess[i] === answer[i]) {
+          strike++;
+        } else if (answer.includes(guess[i])) {
+          ball++;
+        }
+      }
+
+      const result = `${input} ➤ ${strike}S ${ball}B`;
+      const logEntry = document.createElement("div");
+      logEntry.textContent = result;
+      log.appendChild(logEntry);
+
+      if (strike === 3) {
+        setTimeout(() => {
+          alert(`🎉 정답입니다! (${answer.join('')})\n게임이 새로 시작됩니다.`);
+          location.reload();
+        }, 100);
+      }
+
+      document.getElementById("guess").value = "";
+      document.getElementById("guess").focus();
+    }
+  </script>
+</body>
+
+</html>
